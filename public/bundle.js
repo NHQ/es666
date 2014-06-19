@@ -1,28 +1,30 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var eat = require('./')()
+var eat = require('./')
 
-var code = "var gamma = require('gamma'); console.log(gamma);"
+var code = "var gamma = require('gamma'); console.log(gamma(9));"
 
-eat(code)
+eat(code, function(err, $return, fn){
+
+  // $return is the return value from executing your source code
+  // fn is the source, funcified
+
+  console.log(err, $return, fn)
+
+})
 
 },{"./":2}],2:[function(require,module,exports){
 var detect = require('detective')
 var endpoint = "http://wzrd.in/multi"
+var moduleCache = {}
+var _require = require
+require = function(module){
+  if(moduleCache[module]) return moduleCache[module].exports
+    else return _require(module)
+}
 
-module.exports = function(uri, cb){
-  if("string" == typeof uri) endpoint = uri
-  if("function" == typeof uri){
-    cb = uri
-  }
-  var moduleCache = {}
-  t = 0, i = 0, rate = 44100 
-  var _require = require
-  require = function(module){
-    if(moduleCache[module]) return moduleCache[module].exports
-      else return _require(module)
-  }
-
-  return function(str){
+module.exports = function(str, uri, cb){
+    if('function' == typeof uri) cb = uri
+    if('string' == typeof uri) endpoint = uri
     var _fn = new Function(['require'], str)
     var modules = detect(_fn.toString())
     if(modules.length){
@@ -41,7 +43,7 @@ module.exports = function(uri, cb){
       })
       if(cached.length == modules.length) {
         // all cached
-        var fn = new Function(str)()
+        var fn = new Function(str)
         var x = fn()
         if(cb) cb(null, x, fn)
       }
@@ -55,10 +57,10 @@ module.exports = function(uri, cb){
             names.forEach(function(name){
               moduleCache[help[name]] = mods[name]
               var m = {exports: {}}
-              var x = new Function(["module"],mods[name].bundle)
-              x(m, undefined)
+              var e = m.exports
+              var x = new Function(["module", "exports"], mods[name].bundle)
+              x(m, e)
               moduleCache[help[name]].exports = m.exports
-              console.log(m, moduleCache[help[name]].exports)
             })
             var x = _fn(require)
             if(cb) cb(null, x, _fn)
@@ -69,11 +71,10 @@ module.exports = function(uri, cb){
       }
     }
     else{
-      var fn = new Function(str)()
+      var fn = new Function(str)
       var x = fn()
       if(cb) cb(null, x, fn)
     }
-  }
 }
 
 },{"detective":3}],3:[function(require,module,exports){
