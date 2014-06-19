@@ -1,6 +1,5 @@
 var eat = require('./')()
 
-var code = "var gamma = require('gamma'); console.log(gamma(9));"
+var code = "var gamma = require('gamma'); console.log(gamma);"
 
-console.log(eat, code)
 eat(code)
