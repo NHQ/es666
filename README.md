@@ -23,7 +23,7 @@ pass a callback for cuz u know why callbacks
 the callback will have 3 arguments: err, $return, and the function itself, where $return is the return value from executing your source, and the function itself is the function used to execute your source
 
 ```js
-var eat = require('es666')('http://wzrd.in/') // the default
+var eat = require('es666')
 var code = "var gamma = require('gamma')"
 eat(code, callBack)
 ```
