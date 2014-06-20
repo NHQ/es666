@@ -16,5 +16,8 @@
     "LeBroN"
   ],
   "author": "http://johnnyscript.us",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "detective": "~3.1.0"
+  }
 }
