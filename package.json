@@ -1,0 +1,23 @@
+{
+  "name": "es666",
+  "version": "0.0.666",
+  "description": "async front end module loader and code executor",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "browserify",
+    "browserify-cdn",
+    "wzrd",
+    "es6",
+    "bubba",
+    "lebron",
+    "LeBroN"
+  ],
+  "author": "http://johnnyscript.us",
+  "license": "ISC",
+  "dependencies": {
+    "detective": "~3.1.0"
+  }
+}

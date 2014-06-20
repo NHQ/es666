@@ -1,22 +1,15 @@
-var http = require('hyperquest')
 var detect = require('detective')
-var concat = require('concat-stream')
 var endpoint = "http://wzrd.in/multi"
+var moduleCache = {}
+var _require = require
+require = function(module){
+  if(moduleCache[module]) return moduleCache[module].exports
+    else return _require(module)
+}
 
-module.exports = function(uri, cb){
-  if("string" == typeof uri) endpoint = uri
-  if("function" == typeof uri){
-    cb = uri
-  }
-  var moduleCache = {}
-  t = 0, i = 0, rate = 44100 
-  var _require = require
-  require = function(module){
-    if(moduleCache[module]) return moduleCache[module].exports
-      else return _require(module)
-  }
-
-  return function(str){
+module.exports = function(str, uri, cb){
+    if('function' == typeof uri) cb = uri
+    if('string' == typeof uri) endpoint = uri
     var _fn = new Function(['require'], str)
     var modules = detect(_fn.toString())
     if(modules.length){
@@ -35,41 +28,36 @@ module.exports = function(uri, cb){
       })
       if(cached.length == modules.length) {
         // all cached
-        var fn = new Function(str)()
+        var fn = new Function(str)
         var x = fn()
         if(cb) cb(null, x, fn)
       }
       else{
-        var post = http.post(endpoint, function(err, res){
-          console.log(err, res)
-        })
-        post.pipe(concat(function(data){
-            var mods = JSON.parse(data);
+        var post = new XMLHttpRequest();
+        post.open('POST', endpoint, true)
+        post.onload = function(e){
+          if(this.status == 200){
+            var mods = JSON.parse(this.responseText);
             var names = Object.keys(mods)
             names.forEach(function(name){
-              var x = moduleCache[help[name]] = mods[name]
+              moduleCache[help[name]] = mods[name]
               var m = {exports: {}}
-              Function([help[name]], x.bundle)(m)
+              var e = m.exports
+              var x = new Function(["module", "exports"], mods[name].bundle)
+              x(m, e)
               moduleCache[help[name]].exports = m.exports
             })
-            var fn = _fn(require)
-            var x = fn()
-            if(cb) cb(null, x, fn) 
-        }))
-        post.on('end', function(){
-          console.log('end')
-        })
-        post.write(JSON.stringify(body))
-        post.on('error', function(err){
-          if(cb) cb(err)
-        })
-
+            var x = _fn(require)
+            if(cb) cb(null, x, _fn)
+          }
+          else console.log(this.status)
+        } 
+        post.send(JSON.stringify(body))
       }
     }
     else{
-      var fn = new Function(str)()
+      var fn = new Function(str)
       var x = fn()
       if(cb) cb(null, x, fn)
     }
-  }
 }
