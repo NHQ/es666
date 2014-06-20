@@ -32,7 +32,7 @@ eat(code, callBack)
 
 You can run this example by serving up public/index.html with a static file server like [ecstatic](https://npmjs.org/package/ecstatic), which can be used straight from the CLI.
 
-'''js
+```js
 
 var eat = require('es666')
 
@@ -44,5 +44,5 @@ eat(code, function(err, $returnValue, fn){
   // fn isthe function that returned that value
 })
 
-'''
+```
 
