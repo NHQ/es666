@@ -1,6 +1,6 @@
 {
   "name": "es666",
-  "version": "0.0.666",
+  "version": "0.1.0",
   "description": "async front end module loader and code executor",
   "main": "index.js",
   "scripts": {
