@@ -1,10 +1,12 @@
 var detect = require('detective')
+
 var endpoint = "http://wzrd.in/multi"
 var moduleCache = {}
-var _require = require
-require = function(module){
+global.require = require
+
+var _dereq_ = function(module){
   if(moduleCache[module]) return moduleCache[module].exports
-    else return _require(module)
+    else return require(module)
 }
 
 module.exports = function(str, uri, cb){
@@ -28,8 +30,8 @@ module.exports = function(str, uri, cb){
       })
       if(cached.length == modules.length) {
         // all cached
-        var fn = new Function(str)
-        var x = fn()
+        var fn = new Function(['require'], str)
+        var x = fn(_dereq_)
         if(cb) cb(null, x, fn)
       }
       else{
@@ -43,11 +45,11 @@ module.exports = function(str, uri, cb){
               moduleCache[help[name]] = mods[name]
               var m = {exports: {}}
               var e = m.exports
-              var x = new Function(["module", "exports"], mods[name].bundle)
-              x(m, e)
+              var x = new Function(["require", "module", "exports"], mods[name].bundle)
+              x(_dereq_, m, e)
               moduleCache[help[name]].exports = m.exports
             })
-            var x = _fn(require)
+            var x = _fn(_dereq_)
             if(cb) cb(null, x, _fn)
           }
           else console.log(this.status)
@@ -56,8 +58,8 @@ module.exports = function(str, uri, cb){
       }
     }
     else{
-      var fn = new Function(str)
-      var x = fn()
+      var fn = new Function(['require'], str)
+      var x = fn(_dereq_)
       if(cb) cb(null, x, fn)
     }
 }
