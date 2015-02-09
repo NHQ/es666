@@ -16,7 +16,7 @@ the module is function that takes 3 arguments.  two of them are optional.
 
 the first arg is the string of source code.
 
-pass another string as a URI for your brwoserify-cdn // default is http://wzrd.in
+pass another string as a URI for your brwoserify-cdn // default is https://wzrd.in/multi
 
 pass a callback for cuz u know why callbacks
 
