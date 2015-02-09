@@ -1,6 +1,6 @@
 var detect = require('detective')
 
-var endpoint = "http://wzrd.in/multi"
+var endpoint = "https://wzrd.in/multi"
 var moduleCache = {}
 global.require = require
 
